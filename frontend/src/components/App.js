@@ -25,9 +25,27 @@ const App = () => {
   const addPerson = (e) => {
     e.preventDefault()
 
-    const nameExists = persons.find((person) => person.name === newName)
-    if (nameExists) {
-      alert(`${newName} is already added to phonebook`)
+    const existingPerson = persons.find((person) => person.name === newName)
+    if (existingPerson) {
+      const shouldReplaceNumber = window.confirm(
+        `${existingPerson.name} is already added to phonebook, replace the old number with a  new one? `
+      )
+      if (!shouldReplaceNumber) {
+        return
+      }
+
+      const updatedPerson = { ...existingPerson, number: newNumber }
+      personsService
+        .update(existingPerson.id, updatedPerson)
+        .then((returnedPerson) => {
+          setPersons((persons) =>
+            persons.map((person) =>
+              person.id !== updatedPerson.id ? person : returnedPerson
+            )
+          )
+          setNewName('')
+          setNewNumber('')
+        })
       return
     }
 
@@ -45,7 +63,8 @@ const App = () => {
 
   const deletePerson = (id) => {
     const personToDelete = persons.find((person) => person.id === id)
-    if (!window.confirm(`Delete ${personToDelete.name}?`)) {
+    const shouldDeletePerson = window.confirm(`Delete ${personToDelete.name}?`)
+    if (!shouldDeletePerson) {
       return
     }
 
@@ -70,11 +89,7 @@ const App = () => {
       <PersonList
         persons={personsToShow}
         renderPerson={(person) => (
-          <PersonItem
-            key={person.name + person.number}
-            person={person}
-            onDelete={deletePerson}
-          />
+          <PersonItem key={person.id} person={person} onDelete={deletePerson} />
         )}
       />
     </div>
