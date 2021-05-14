@@ -11,7 +11,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
-  const [successMessage, setSuccessMessage] = useState(null)
+  const [message, setMessage] = useState(null)
 
   useEffect(() => {
     personsService.getAll().then((initialPersons) => setPersons(initialPersons))
@@ -57,8 +57,8 @@ const App = () => {
     }
 
     personsService.create(personObj).then((returnedPerson) => {
-      setSuccessMessage(`Added ${returnedPerson.name}`)
-      setTimeout(() => setSuccessMessage(null), 5000)
+      setMessage({ content: `Added ${returnedPerson.name}`, type: 'success' })
+      setTimeout(() => setMessage(null), 5000)
       setPersons((persons) => persons.concat(returnedPerson))
       setNewName('')
       setNewNumber('')
@@ -72,15 +72,25 @@ const App = () => {
       return
     }
 
-    personsService.delete(id).then(() => {
-      setPersons((persons) => persons.filter((person) => person.id !== id))
-    })
+    personsService
+      .delete(id)
+      .then(() => {
+        setPersons((persons) => persons.filter((person) => person.id !== id))
+      })
+      .catch(() => {
+        setMessage({
+          content: `Info of ${personToDelete.name} has already been removed from server`,
+          type: 'error',
+        })
+        setTimeout(() => setMessage(null), 5000)
+        setPersons((persons) => persons.filter((person) => person.id !== id))
+      })
   }
 
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={successMessage} />
+      <Notification message={message} />
       <Filter value={filter} onChange={setFilter} />
       <h2>add a new</h2>
       <AddPerson
