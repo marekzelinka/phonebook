@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
-import axios from 'axios'
 import Filter from './Filter'
 import AddPersonForm from './AddPersonForm'
 import PersonList from './PersonList'
 import personsService from 'services/persons'
+import PersonItem from './PersonItem'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -43,6 +43,17 @@ const App = () => {
     })
   }
 
+  const deletePerson = (id) => {
+    const personToDelete = persons.find((person) => person.id === id)
+    if (!window.confirm(`Delete ${personToDelete.name}?`)) {
+      return
+    }
+
+    personsService.delete(id).then(() => {
+      setPersons((persons) => persons.filter((person) => person.id !== id))
+    })
+  }
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -56,7 +67,16 @@ const App = () => {
         onNumberChange={setNewNumber}
       />
       <h2>Numbers</h2>
-      <PersonList persons={personsToShow} />
+      <PersonList
+        persons={personsToShow}
+        renderPerson={(person) => (
+          <PersonItem
+            key={person.name + person.number}
+            person={person}
+            onDelete={deletePerson}
+          />
+        )}
+      />
     </div>
   )
 }
