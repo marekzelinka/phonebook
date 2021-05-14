@@ -1,4 +1,4 @@
-const AddPersonForm = ({
+const AddPerson = ({
   onSubmit,
   name,
   onNameChange,
@@ -20,4 +20,4 @@ const AddPersonForm = ({
   </form>
 )
 
-export default AddPersonForm
+export default AddPerson
