@@ -37,5 +37,15 @@ app.get('/info', (_req, res) =>
 
 app.get('/api/persons', (_req, res) => res.json(persons))
 
+app.get('/api/persons/:id', (req, res) => {
+  const person = persons.find((person) => person.id === Number(req.params.id))
+  if (person === undefined) {
+    res.status(404).end()
+    return
+  }
+
+  res.json(person)
+})
+
 const PORT = 3001
 app.listen(PORT, () => console.log(`Server runnning on port ${PORT}`))
