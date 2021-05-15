@@ -26,6 +26,15 @@ const generateId = () => {
 
 const app = express()
 
+app.get('/info', (_req, res) =>
+  res.send(
+    `<div>
+      <p>Phonebook has info for ${persons.length} people</p>
+      <p>${new Date()}</p>
+    </div>`
+  )
+)
+
 app.get('/api/persons', (_req, res) => res.json(persons))
 
 const PORT = 3001
