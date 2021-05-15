@@ -26,6 +26,8 @@ const generateId = () => {
 
 const app = express()
 
+app.use(express.json())
+
 app.get('/info', (_req, res) =>
   res.send(
     `<div>
@@ -34,6 +36,14 @@ app.get('/info', (_req, res) =>
     </div>`
   )
 )
+
+app.post('/api/persons', (req, res) => {
+  const person = req.body
+  person.id = generateId()
+
+  persons = persons.concat(person)
+  res.status(201).json(person)
+})
 
 app.get('/api/persons', (_req, res) => res.json(persons))
 
